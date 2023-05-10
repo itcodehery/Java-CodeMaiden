@@ -4,5 +4,4 @@ This CodeMaiden is for Java. I might add repos for projects from C or Ruby in th
 All my code is up for forking and modifying. You don't even need to inform me cus it's not that
 advanced of a code to fork anyway.
 # Why?
-I'm currently in college, and naturally college programs are cr*p. So this
-repo is also for my personal projects, cus its mostly only gonna be my personal project.
+I'm currently in college, and naturally college programs are cr*p. I might add some programs in the near future related to college but until then, it'll just be my personal projects.
