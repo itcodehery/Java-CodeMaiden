@@ -3,7 +3,7 @@ import java.util.*;
 public class Calculator {
 		public static void main(String[] args) {
 			Scanner getScan = new Scanner(System.in);
-			boolean isFalse = false;
+			boolean isFalse = false; 
 			while(!isFalse) {
 				System.out.println("Enter an expression(ex: 1+3): ");
 				String expression = getScan.nextLine();

@@ -4,9 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.AbstractBorder;
 import java.awt.event.*;
-
+import java.util.*;
 public class CalculatorGUI extends JFrame implements ActionListener{
 	JTextField displayField = new JTextField();
 	
@@ -39,6 +38,79 @@ public class CalculatorGUI extends JFrame implements ActionListener{
         return button;
     }
 	
+	//to evaluate in fix
+	private static double evaluateInfix(String infix) {
+		String postfix = new String();
+	    Stack<Character> stack = new Stack<>();
+
+	    for (char c : infix.toCharArray()) {
+	        if (Character.isDigit(c)) {
+	            postfix += c;
+	        } else if (c == '(') {
+	            stack.push(c);
+	        } else if (c == ')') {
+	            while (!stack.isEmpty() && stack.peek() != '(') {
+	                postfix += stack.pop();
+	            }
+	            stack.pop(); // Discard the opening parenthesis
+	        } else {
+	            // Operator encountered
+	            while (!stack.isEmpty() && getPrecedence(c) <= getPrecedence(stack.peek())) {
+	                postfix += stack.pop();
+	            }
+	            stack.push(c);
+	        }
+	    }
+
+	    while (!stack.isEmpty()) {
+	        postfix += stack.pop();
+	    }
+	    
+	    Stack<Double> stack1 = new Stack<>();
+
+	    for (char c : postfix.toCharArray()) {
+	        if (Character.isDigit(c)) {
+	            stack1.push((double) (c - '0')); // Convert char digit to double
+	        } else {
+	            double operand2 = stack1.pop();
+	            double operand1 = stack1.pop();
+	            double result = performOperation(c, operand1, operand2);
+	            stack1.push(result);
+	        }
+	    }
+
+	    return stack.pop();
+	}
+	
+	private static double performOperation(char operator, double operand1, double operand2) {
+	    switch (operator) {
+	        case '+':
+	            return operand1 + operand2;
+	        case '-':
+	            return operand1 - operand2;
+	        case '*':
+	            return operand1 * operand2;
+	        case '/':
+	            return operand1 / operand2;
+	        default:
+	            throw new IllegalArgumentException("Invalid operator: " + operator);
+	    }
+	}
+	
+	private static int getPrecedence(char operator) {
+	    switch (operator) {
+	        case '+':
+	        case '-':
+	            return 1;
+	        case '*':
+	        case '/':
+	            return 2;
+	        default:
+	            return 0;
+	    }
+	}
+
+	//The main calculator UI with the super frame
 	public CalculatorGUI() {
 		//Set frame properties
 		setTitle("Calculator");
@@ -49,7 +121,6 @@ public class CalculatorGUI extends JFrame implements ActionListener{
 		setLayout(new BorderLayout());
 		
 		//Creating a text field
-
 		displayField.setEditable(false);
 		add(displayField, BorderLayout.NORTH);
 		
@@ -105,6 +176,16 @@ public class CalculatorGUI extends JFrame implements ActionListener{
 		clearPanel.add(clearButton);
 		add(clearPanel, BorderLayout.CENTER);
 		
+		// creating the equals button
+		JButton equalsButton = new JButton("=");
+		equalsButton.addActionListener(this);
+		equalsButton.setFont(new Font("Arial", Font.BOLD,20));
+		equalsButton.setBackground(Color.LIGHT_GRAY);
+		equalsButton.setFocusable(false);
+		//Rounded corners
+		equalsButton.setBorder(compoundBorder);
+		numberPanel.add(equalsButton);
+		
 		//adding a super panel: buttonPanel for all sub panels
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -129,11 +210,7 @@ public class CalculatorGUI extends JFrame implements ActionListener{
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         buttonPanel.add(clearPanel, gbc);
-
-        add(buttonPanel, BorderLayout.CENTER);
-
-
-		
+        
 		//set frame size and visibility
 		setSize(300, 400);
 		setVisible(true);
@@ -158,8 +235,15 @@ public class CalculatorGUI extends JFrame implements ActionListener{
 	        }
 
 	        displayField.setText(currentText);
-	    } else if (command.equals("C")) {
+	    } 
+	    else if (command.equals("C")) {
 	        displayField.setText("");
+	    } 
+	    else if (command.equals("=")) {
+	    	String expression = displayField.getText();
+            double result = evaluateInfix(expression);
+            displayField.setText("");
+            displayField.setText(String.valueOf(result));
 	    }
 	}
 	
