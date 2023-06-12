@@ -1,5 +1,6 @@
 package calculator_beta;
 import java.util.*;
+
 public class IPAddressCalc {
 
 	public static String binaryToOctal(String binary) {
@@ -157,6 +158,7 @@ public class IPAddressCalc {
         networkIP = intArrToString(subnetParts);
         return networkIP;
     }
+    
     public static void main(String[] args) {
 
         // Get input values from user
